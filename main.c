@@ -2,6 +2,7 @@
 #include <avr/pgmspace.h>
 #include <util/delay.h>
 #include "usb_keyboard.h"
+#include "uart.h"
 
 #define CPU_PRESCALE(n)  (CLKPR = 0x80, CLKPR = (n))
 
@@ -45,19 +46,23 @@ int main(void) {
   // set for 16 MHz clock
   CPU_PRESCALE(0);
 
-  // Initialize USB, wait for host to respond
+  // Initialize USB
   usb_init();
+
+  // While we wait for the host to respond, initialize the
+  // bluetooth modem
+  uart_init(115200);
+
   while (!usb_configured()) /* wait */ ;
-  // Give the host another second to init drivers
+  // Give the host another half a second to init drivers
   _delay_ms(500);
 
-  usb_keyboard_press(KEY_SPACE, KEY_GUI);
-  _delay_ms(200);
-  type_message("TextEdit\n");
-  _delay_ms(600);
-  
-  type_message("Now is the time for all good men to come to the aid of their country.\n");
-  type_message("The quick brown fox jumps over the lazy dog.\n");
+  while(1) {
+    if(uart_available()) {
+      char c = uart_getchar();
+      send_key(c);
+    }
+  }
 
   return 0;
 }
