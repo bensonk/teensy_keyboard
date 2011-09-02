@@ -1,0 +1,6 @@
+h2. Teensy Keyboard Emulator
+
+This is a barebones project that provides the tools to create custom teensy
+programs that emulate a keyboard.  It makes it easy to provide strings that
+will be "typed" into whatever computer the teensy is connected to.  It's 
+a fairly minimal project at this point, but certainly works.  
