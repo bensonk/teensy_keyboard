@@ -3,37 +3,12 @@
 #include <util/delay.h>
 #include "usb_keyboard.h"
 #include "uart.h"
+#include "char_to_keys.h"
 
 #define CPU_PRESCALE(n)  (CLKPR = 0x80, CLKPR = (n))
 
 void send_key(char c) {
-  if(c >= 'a' && c <= 'z') {
-    int keycode = c - 'a' + KEY_A;
-    usb_keyboard_press(keycode, 0);
-  }
-  else if(c >= 'A' && c <= 'Z') {
-    int keycode = c - 'A' + KEY_A;
-    usb_keyboard_press(keycode, KEY_SHIFT);
-  }
-  else if(c == ' ') {
-    usb_keyboard_press(KEY_SPACE, 0);
-  }
-  else if(c == '.') {
-    usb_keyboard_press(KEY_PERIOD, 0);
-  }
-  else if(c == ',') {
-    usb_keyboard_press(KEY_COMMA, 0);
-  }
-  else if(c == '!') {
-    usb_keyboard_press(KEY_1, KEY_SHIFT);
-  }
-  else if(c == '?') {
-    usb_keyboard_press(KEY_SLASH, KEY_SHIFT);
-  }
-  else if(c == '\n') {
-    usb_keyboard_press(KEY_ENTER, 0);
-  }
-  return;
+  usb_keyboard_press(keys[c], modifiers[c]);
 }
 
 void type_message(char* msg) {
